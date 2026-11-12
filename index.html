@@ -1,0 +1,635 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>DUÉLLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+  /* Layout: wine hero band with the full photo, a pre-order strip, then three catalogs (claws, brushes, rhinestones) as photo tiles that open large, a works gallery, four order steps and a message builder. */
+  :root {
+    --bg: #f7f0f0;
+    --surface: #ede1e2;
+    --fg: #2b0f18;
+    --muted: #6e4a54;
+    --line: #d8c3c7;
+    --accent: #6a1b31;
+    --accent-ink: #fbf3f4;
+    --tile: #10050a;
+    --hero-bg: #4a0f20;
+    --hero-fg: #f6e8ea;
+    --hero-muted: #d1aab3;
+    --hero-btn: #f6e8ea;
+    --hero-btn-ink: #4a0f20;
+    --font-display: "Cormorant Garamond", "Times New Roman", serif;
+    --font-body: "Jost", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1d0a10;
+      --surface: #2a1119;
+      --fg: #f3e6e8;
+      --muted: #c3a0a9;
+      --line: #4a2430;
+      --accent: #d27890;
+      --accent-ink: #1d0a10;
+      --hero-bg: #3a0b19;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1d0a10;
+    --surface: #2a1119;
+    --fg: #f3e6e8;
+    --muted: #c3a0a9;
+    --line: #4a2430;
+    --accent: #d27890;
+    --accent-ink: #1d0a10;
+    --hero-bg: #3a0b19;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .inner {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  }
+  .inner > * { min-width: 0; }
+
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.08; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 26px;
+    font: 500 14px/1 var(--font-body);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn:hover { background: transparent; color: var(--accent); }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn.ghost:hover { background: var(--accent); color: var(--accent-ink); }
+  .hero .btn { background: var(--hero-btn); color: var(--hero-btn-ink); border-color: var(--hero-btn); }
+  .hero .btn:hover { background: transparent; color: var(--hero-fg); }
+  .hero .btn.ghost { background: transparent; color: var(--hero-fg); border-color: var(--hero-muted); }
+  .hero .btn.ghost:hover { background: var(--hero-fg); color: var(--hero-btn-ink); }
+
+  /* Header + hero */
+  .hero { background: var(--hero-bg); color: var(--hero-fg); }
+  .topbar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 28px; padding-block: 22px; }
+  .wordmark { font-family: var(--font-display); font-weight: 500; font-size: 28px; letter-spacing: 0.32em; text-decoration: none; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .topbar nav a { text-decoration: none; color: var(--hero-muted); }
+  .topbar nav a:hover { color: var(--hero-fg); }
+
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 40px 56px; align-items: center; padding-block: 28px 56px; }
+  .hero .eyebrow { color: var(--hero-muted); }
+  .hero h1 { font-size: clamp(44px, 7vw, 84px); margin-top: 18px; }
+  .hero h1 em { font-style: italic; font-weight: 400; }
+  .hero .lead { margin-top: 22px; max-width: 46ch; color: var(--hero-muted); font-size: 17px; font-weight: 300; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero .photo { margin: 0; }
+  .hero .photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: contain; background: var(--tile); }
+  .hero .photo figcaption { margin-top: 10px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hero-muted); }
+
+  /* Pre-order strip */
+  .notice { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .notice .inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 28px; padding-block: 22px; }
+  .notice strong { font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: clamp(24px, 3.4vw, 34px); color: var(--accent); }
+  .notice span { font-size: 16px; color: var(--fg); }
+
+  /* Sections */
+  section { padding-block: 72px 8px; }
+  .head { display: grid; gap: 14px; margin-bottom: 28px; max-width: 62ch; }
+  .head h2 { font-size: clamp(34px, 5vw, 52px); }
+  .head p { color: var(--muted); }
+  .chosen { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; min-height: 28px; margin-bottom: 20px; font-size: 14px; color: var(--muted); }
+  .chosen b { font-weight: 500; color: var(--fg); }
+  .chosen a { color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; font-size: 12px; text-underline-offset: 4px; }
+
+  /* Photo tiles */
+  .tiles { display: grid; gap: 22px 18px; list-style: none; margin: 0; padding: 0; }
+  .tiles.claws { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles.brushes { grid-template-columns: minmax(0, 1fr); }
+  .tiles.stones { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 14px; }
+  @media (min-width: 640px) {
+    .tiles.claws { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .tiles.brushes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tiles.stones { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (min-width: 960px) {
+    .tiles.brushes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .tiles.stones { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+  .tile { display: grid; gap: 10px; width: 100%; padding: 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: zoom-in; }
+  .tile .ph { position: relative; display: block; background: var(--tile); outline: 1px solid transparent; outline-offset: 3px; transition: outline-color 0.2s; }
+  .tile img { width: 100%; }
+  .tile:hover .ph { outline-color: var(--line); }
+  .tile[aria-pressed="true"] .ph { outline: 2px solid var(--accent); }
+  .tile .mark { position: absolute; top: 8px; right: 8px; padding: 3px 8px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; background: var(--accent); color: var(--accent-ink); }
+  .tile .mark[hidden] { display: none; }
+  .tile .cap { display: grid; gap: 1px; }
+  .tile .code { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .tile .nm { font-family: var(--font-display); font-size: 20px; line-height: 1.15; }
+  .stones .tile { text-align: center; }
+  .stones .ph { border-radius: 50%; overflow: hidden; }
+  .stones .mark { top: auto; right: auto; bottom: 8px; left: 50%; transform: translateX(-50%); }
+  .stones .nm { font-size: 18px; }
+  .engrave-note { margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); max-width: 70ch; }
+
+  /* Works gallery */
+  .works { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; align-items: start; }
+  .works .tile .ph { background: var(--surface); }
+
+  /* Steps */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 28px 32px; counter-reset: s; }
+  .steps li { counter-increment: s; border-top: 1px solid var(--accent); padding-top: 16px; }
+  .steps li::before { content: counter(s, upper-roman); font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--accent); }
+  .steps h3 { font-size: 24px; margin-top: 6px; }
+  .steps p { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+  /* Order builder */
+  .order { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px 56px; align-items: start; }
+  form { display: grid; gap: 18px; }
+  .field { display: grid; gap: 6px; }
+  .field[hidden] { display: none; }
+  label { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  input, select, textarea { width: 100%; font: 400 16px/1.4 var(--font-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 0; padding: 13px 14px; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 84px; }
+  .picks { display: flex; flex-wrap: wrap; gap: 14px; }
+  .picks .pk { display: grid; gap: 6px; width: 120px; }
+  .picks .pk[hidden] { display: none; }
+  .picks img { width: 100%; background: var(--tile); }
+  .picks .st img { border-radius: 50%; }
+  .picks small { font-size: 12px; color: var(--muted); line-height: 1.3; }
+  .msg { background: var(--surface); padding: 24px; display: grid; gap: 16px; }
+  .msg pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 400 15px/1.6 var(--font-body); user-select: all; }
+  .msg .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .note { font-size: 13px; color: var(--muted); }
+  .toast { min-height: 20px; font-size: 13px; color: var(--accent); }
+
+  footer { margin-top: 80px; background: var(--hero-bg); color: var(--hero-fg); }
+  footer .inner { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 32px; padding-block: 36px; }
+  footer .wordmark { font-size: 22px; }
+  footer p { color: var(--hero-muted); font-size: 14px; }
+
+  /* Enlarged view */
+  .lb {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+    background: rgba(12, 4, 8, 0.9);
+    padding: max(14px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) max(14px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
+  }
+  .lb[hidden] { display: none; }
+  .lb-box { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; width: 100%; max-width: 940px; max-height: 100%; background: var(--bg); color: var(--fg); overflow: hidden; }
+  .lb-stage { display: grid; place-items: center; min-height: 0; background: var(--tile); }
+  .lb-stage img { width: 100%; max-height: 68vh; object-fit: contain; }
+  .lb-close { position: absolute; top: 8px; right: 8px; width: 44px; height: 44px; display: grid; place-items: center; font-size: 26px; line-height: 1; color: #f6e8ea; background: rgba(16, 5, 10, 0.7); border: 1px solid rgba(246, 232, 234, 0.4); cursor: pointer; }
+  .lb-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 16px 20px; }
+  .lb-foot h3 { font-size: 26px; }
+  .lb-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lb-actions .btn { min-height: 44px; padding: 0 20px; }
+  .lb-actions .btn.arrow { padding: 0 16px; font-size: 18px; }
+
+  @media (max-width: 760px) {
+    .hero-grid, .order { grid-template-columns: minmax(0, 1fr); }
+    section { padding-block: 56px 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .tile .ph { transition: none; }
+  }
+</style>
+
+<header class="hero">
+  <div class="inner">
+    <div class="topbar">
+      <a class="wordmark" href="#top" id="top">DUÉLLE</a>
+      <nav aria-label="Разделы">
+        <a href="#claws">Крабики</a>
+        <a href="#brushes">Расчёски</a>
+        <a href="#stones">Стразы</a>
+        <a href="#works">Работы</a>
+        <a href="#order">Заказ</a>
+      </nav>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Расчёски и крабики с именем</p>
+        <h1>Ваше <em>имя</em>, выложенное кристаллами</h1>
+        <p class="lead">Каждое изделие делаем под заказ: выбираете основу и цвет страз, мы выкладываем имя вручную. Заказ принимаем в WhatsApp и Instagram.</p>
+        <div class="actions">
+          <a class="btn" id="heroWa" href="https://wa.me/" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn ghost" id="heroIg" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <figure class="photo">
+        <img src="img/hero.jpg" alt="Черепаховая расчёска и краб для волос с именем из страз рядом с бокалом" width="1200" height="1600">
+        <figcaption>Черепаховый цвет, прозрачные стразы</figcaption>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<div class="notice">
+  <div class="inner">
+    <strong>Работаем по предзаказу</strong>
+    <span>Доставка 1,5–2 недели с момента подтверждения заказа.</span>
+  </div>
+</div>
+
+<main>
+  <section id="claws">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Каталог · 18 видов</p>
+        <h2>Виды крабиков</h2>
+        <p>Выберите цвет и фактуру. Нажмите на фото, чтобы рассмотреть краб крупнее и добавить его в заказ. Имя выкладываем стразами на выбранном крабе.</p>
+      </div>
+      <p class="chosen" id="chosenClaw" aria-live="polite"></p>
+      <ul class="tiles claws" id="gridClaws"></ul>
+    </div>
+  </section>
+
+  <section id="brushes">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Каталог · 9 видов</p>
+        <h2>Виды расчёсок</h2>
+        <p>На ручке каждой расчёски гравировка с логотипом DUÉLLE. Имя выкладываем стразами на широкой части.</p>
+      </div>
+      <p class="chosen" id="chosenBrush" aria-live="polite"></p>
+      <ul class="tiles brushes" id="gridBrushes"></ul>
+    </div>
+  </section>
+
+  <section id="stones">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Каталог · 11 цветов</p>
+        <h2>Виды страз</h2>
+        <p>Имя собираем из кристаллов выбранного цвета. Любой цвет подходит к любому крабу и любой расчёске.</p>
+      </div>
+      <p class="chosen" id="chosenStone" aria-live="polite"></p>
+      <ul class="tiles stones" id="gridStones"></ul>
+    </div>
+  </section>
+
+  <section id="works">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Готовые изделия</p>
+        <h2>Наши работы</h2>
+        <p>Так выглядят заказы после того, как имя выложено стразами.</p>
+      </div>
+      <div class="works" id="gridWorks"></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Как заказать</p>
+        <h2>Четыре шага до вашего имени</h2>
+      </div>
+      <ol class="steps">
+        <li><h3>Выберите виды</h3><p>Краб и расчёска из каталога выше, затем цвет страз.</p></li>
+        <li><h3>Напишите нам</h3><p>В WhatsApp или Instagram Direct: имя и выбранные виды.</p></li>
+        <li><h3>Согласуем макет</h3><p>Подтверждаем написание имени и расположение на изделии.</p></li>
+        <li><h3>Предзаказ и доставка</h3><p>Делаем под заказ, доставка занимает 1,5–2 недели.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="order">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Предзаказ</p>
+        <h2>Соберите сообщение для нас</h2>
+        <p>Выбранные виды подставляются сами. Отправьте готовый текст в WhatsApp или скопируйте его для Instagram.</p>
+      </div>
+      <div class="order">
+        <form id="form" autocomplete="off">
+          <div class="field">
+            <label for="kind">Изделие</label>
+            <select id="kind">
+              <option value="claw">Краб</option>
+              <option value="brush">Расчёска</option>
+              <option value="set">Набор: краб и расчёска</option>
+            </select>
+          </div>
+          <div class="field" id="fClaw">
+            <label for="claw">Вид краба</label>
+            <select id="claw"></select>
+          </div>
+          <div class="field" id="fBrush" hidden>
+            <label for="brush">Вид расчёски</label>
+            <select id="brush"></select>
+          </div>
+          <div class="field">
+            <label for="stone">Цвет страз</label>
+            <select id="stone"></select>
+          </div>
+          <div class="picks" id="picks"></div>
+          <div class="field">
+            <label for="name">Имя для надписи</label>
+            <input id="name" type="text" placeholder="Например, Амина" maxlength="40">
+          </div>
+          <div class="field">
+            <label for="comment">Пожелания</label>
+            <textarea id="comment" placeholder="Шрифт, размер, подарок к дате и т. п."></textarea>
+          </div>
+        </form>
+        <div class="msg">
+          <p class="eyebrow">Текст сообщения</p>
+          <pre id="preview"></pre>
+          <div class="row">
+            <a class="btn" id="waBtn" href="https://wa.me/" target="_blank" rel="noopener">В WhatsApp</a>
+            <a class="btn ghost" id="igBtn" href="https://www.instagram.com/" target="_blank" rel="noopener">В Instagram</a>
+            <button class="btn ghost" id="copyBtn" type="button">Скопировать</button>
+          </div>
+          <p class="note">Instagram не принимает готовый текст из ссылки: скопируйте сообщение и вставьте его в Direct.</p>
+          <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="wordmark">DUÉLLE</span>
+    <p>Кастомные расчёски и крабики. Работаем по предзаказу, доставка 1,5–2 недели. Заказы: WhatsApp +7 702 222 00 77 и Instagram @duelle.beauty.</p>
+  </div>
+</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-labelledby="lbTitle" hidden>
+  <div class="lb-box">
+    <button class="lb-close" id="lbClose" type="button" aria-label="Закрыть">&times;</button>
+    <div class="lb-stage"><img id="lbImg" alt=""></div>
+    <div class="lb-foot">
+      <div>
+        <p class="eyebrow" id="lbCode"></p>
+        <h3 id="lbTitle"></h3>
+      </div>
+      <div class="lb-actions">
+        <button class="btn ghost arrow" id="lbPrev" type="button" aria-label="Предыдущее фото">&larr;</button>
+        <button class="btn ghost arrow" id="lbNext" type="button" aria-label="Следующее фото">&rarr;</button>
+        <button class="btn" id="lbPick" type="button">Выбрать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Контакты магазина: номер WhatsApp в международном формате и ник в Instagram без @ */
+  var CONFIG = { whatsapp: "77022220077", instagram: "duelle.beauty" };
+
+  var CLAWS = [
+    "Черепаховый тёмный", "Жемчужная волна", "Молочный глянец", "Персиковая мозаика", "Янтарный черепаховый", "Пудровый с блёстками",
+    "Розовый мрамор", "Розовая мозаика", "Розовый жемчуг", "Розовый вихрь", "Голубой перламутр", "Мятно-голубой",
+    "Лавандовый мрамор", "Серо-голубой с блёстками", "Белая мозаика", "Ванильный глянец", "Золотистая мозаика", "Лимонная мозаика"
+  ];
+  var BRUSHES = [
+    "Перламутровая ракушка", "Черепаховая", "Розовая мозаика", "Радужный перламутр", "Голубой перламутр",
+    "Лиловый перламутр", "Розовый мрамор", "Розовый жемчуг", "Янтарный мрамор"
+  ];
+  var STONES = [
+    "Красный", "Голубой", "Чёрный", "Прозрачный", "Синий", "Зелёный",
+    "Нежно-розовый", "Фуксия", "Розовый", "Сиреневый", "Фиолетовый"
+  ];
+  var WORKS = [
+    { img: "img/pink.jpg", name: "Розовый жемчуг", alt: "Розовая расчёска с гравировкой на ручке и краб с именем из розовых страз на металлическом подносе", w: 1000, h: 1778 },
+    { img: "img/white.jpg", name: "Молочный и черепаховый краб", alt: "Два бокала кофейного мартини, на ножках молочный краб с голубыми стразами и черепаховый краб с белыми стразами", w: 1200, h: 1500 },
+    { img: "img/collage.jpg", name: "Черепаховый набор", alt: "Коллаж: бокал, черепаховый краб с именем, черепаховая расчёска с гравировкой на ручке", w: 1021, h: 1348 }
+  ];
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function mk(names, letter, file) {
+    return names.map(function (nm, i) {
+      return { id: file + pad(i + 1), code: letter + "-" + pad(i + 1), name: nm, img: "img/" + file + pad(i + 1) + ".jpg" };
+    });
+  }
+  var DATA = {
+    claw: mk(CLAWS, "К", "k"),
+    brush: mk(BRUSHES, "Р", "r"),
+    stone: mk(STONES, "С", "s")
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { claw: 0, brush: 0, stone: 0, picked: { claw: false, brush: false, stone: false } };
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+
+  /* Tiles */
+  function renderTiles(kind, gridId, w, h) {
+    var ul = $(gridId);
+    ul.innerHTML = DATA[kind].map(function (it, i) {
+      return '<li><button class="tile" type="button" data-kind="' + kind + '" data-i="' + i + '" aria-pressed="false">' +
+        '<span class="ph"><img src="' + it.img + '" alt="' + esc(it.name) + '" width="' + w + '" height="' + h + '" loading="lazy">' +
+        '<span class="mark" hidden>Выбрано</span></span>' +
+        '<span class="cap"><span class="code">' + it.code + '</span><span class="nm">' + esc(it.name) + '</span></span></button></li>';
+    }).join("");
+  }
+  renderTiles("claw", "gridClaws", 680, 500);
+  renderTiles("brush", "gridBrushes", 680, 320);
+  renderTiles("stone", "gridStones", 320, 320);
+
+  $("gridWorks").innerHTML = WORKS.map(function (it, i) {
+    return '<button class="tile" type="button" data-kind="work" data-i="' + i + '">' +
+      '<span class="ph"><img src="' + it.img + '" alt="' + esc(it.alt) + '" width="' + it.w + '" height="' + it.h + '" loading="lazy"></span>' +
+      '<span class="cap"><span class="nm">' + esc(it.name) + '</span></span></button>';
+  }).join("");
+
+  function markTiles() {
+    ["claw", "brush", "stone"].forEach(function (kind) {
+      var grid = $({ claw: "gridClaws", brush: "gridBrushes", stone: "gridStones" }[kind]);
+      var btns = grid.querySelectorAll(".tile");
+      for (var i = 0; i < btns.length; i++) {
+        var on = state.picked[kind] && i === state[kind];
+        btns[i].setAttribute("aria-pressed", on ? "true" : "false");
+        btns[i].querySelector(".mark").hidden = !on;
+      }
+      var el = $({ claw: "chosenClaw", brush: "chosenBrush", stone: "chosenStone" }[kind]);
+      if (state.picked[kind]) {
+        var it = DATA[kind][state[kind]];
+        el.innerHTML = 'Ваш выбор: <b>' + it.code + ' ' + esc(it.name) + '</b> <a href="#order">К заказу</a>';
+      } else {
+        el.textContent = "Нажмите на фото, чтобы выбрать.";
+      }
+    });
+  }
+
+  /* Form */
+  ["claw", "brush", "stone"].forEach(function (kind) {
+    var sel = $(kind);
+    sel.innerHTML = DATA[kind].map(function (it, i) {
+      return '<option value="' + i + '">' + it.code + ' ' + esc(it.name) + '</option>';
+    }).join("") + (kind === "stone" ? '<option value="other">Другой цвет, уточню в переписке</option>' : "");
+  });
+
+  function syncKind() {
+    var k = $("kind").value;
+    $("fClaw").hidden = (k === "brush");
+    $("fBrush").hidden = (k === "claw");
+  }
+
+  function renderPicks() {
+    var k = $("kind").value, html = "";
+    if (k !== "brush") html += pickHtml("claw");
+    if (k !== "claw") html += pickHtml("brush");
+    if ($("stone").value !== "other") html += pickHtml("stone");
+    $("picks").innerHTML = html;
+  }
+  function pickHtml(kind) {
+    var it = DATA[kind][state[kind]];
+    return '<div class="pk ' + (kind === "stone" ? "st" : "") + '"><img src="' + it.img + '" alt="" width="120" height="' + (kind === "claw" ? 88 : kind === "brush" ? 56 : 120) + '"><small>' + it.code + ' ' + esc(it.name) + '</small></div>';
+  }
+
+  function message() {
+    var k = $("kind").value;
+    var lines = ["Здравствуйте! Хочу сделать предзаказ в DUÉLLE."];
+    if (k !== "brush") { var c = DATA.claw[state.claw]; lines.push("Краб: " + c.code + " " + c.name); }
+    if (k !== "claw") { var b = DATA.brush[state.brush]; lines.push("Расчёска: " + b.code + " " + b.name); }
+    if ($("stone").value === "other") lines.push("Цвет страз: уточню в переписке");
+    else { var s = DATA.stone[state.stone]; lines.push("Цвет страз: " + s.code + " " + s.name); }
+    var name = $("name").value.trim();
+    lines.push("Имя на изделии: " + (name || "уточню"));
+    var cm = $("comment").value.trim();
+    if (cm) lines.push("Пожелания: " + cm);
+    lines.push("Знаю, что работаете по предзаказу, доставка 1,5–2 недели.");
+    return lines.join("\n");
+  }
+
+  function waLink(text) {
+    return "https://wa.me/" + (CONFIG.whatsapp || "") + (text ? "?text=" + encodeURIComponent(text) : "");
+  }
+  function igLink() {
+    return CONFIG.instagram ? "https://ig.me/m/" + CONFIG.instagram : "https://www.instagram.com/";
+  }
+
+  function refresh() {
+    syncKind();
+    renderPicks();
+    var m = message();
+    $("preview").textContent = m;
+    $("waBtn").href = waLink(m);
+    $("igBtn").href = igLink();
+    markTiles();
+  }
+
+  $("heroWa").href = waLink("Здравствуйте! Хочу сделать предзаказ в DUÉLLE.");
+  $("heroIg").href = igLink();
+
+  ["claw", "brush", "stone"].forEach(function (kind) {
+    $(kind).addEventListener("change", function () {
+      var v = $(kind).value;
+      if (v !== "other") { state[kind] = parseInt(v, 10); state.picked[kind] = true; }
+      refresh();
+    });
+  });
+  $("kind").addEventListener("change", refresh);
+  $("name").addEventListener("input", refresh);
+  $("comment").addEventListener("input", refresh);
+  $("form").addEventListener("submit", function (e) { e.preventDefault(); });
+
+  /* Enlarged view */
+  var lb = { list: [], i: 0, kind: "", opener: null };
+
+  function lbItem() { return lb.list[lb.i]; }
+  function lbRender() {
+    var it = lbItem();
+    $("lbImg").src = it.img;
+    $("lbImg").alt = it.alt || it.name;
+    $("lbCode").textContent = it.code || "Наши работы";
+    $("lbTitle").textContent = it.name;
+    $("lbPick").hidden = (lb.kind === "work");
+    $("lbPrev").hidden = $("lbNext").hidden = lb.list.length < 2;
+  }
+  function lbOpen(kind, i, opener) {
+    lb.kind = kind; lb.i = i; lb.opener = opener;
+    lb.list = kind === "work" ? WORKS : DATA[kind];
+    lbRender();
+    $("lb").hidden = false;
+    document.body.style.overflow = "hidden";
+    $("lbClose").focus();
+  }
+  function lbClose() {
+    $("lb").hidden = true;
+    document.body.style.overflow = "";
+    if (lb.opener) lb.opener.focus();
+  }
+  function lbStep(d) {
+    lb.i = (lb.i + d + lb.list.length) % lb.list.length;
+    lbRender();
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest(".tile");
+    if (t) lbOpen(t.getAttribute("data-kind"), parseInt(t.getAttribute("data-i"), 10), t);
+  });
+  $("lbClose").addEventListener("click", lbClose);
+  $("lb").addEventListener("click", function (e) { if (e.target === $("lb")) lbClose(); });
+  $("lbPrev").addEventListener("click", function () { lbStep(-1); });
+  $("lbNext").addEventListener("click", function () { lbStep(1); });
+  document.addEventListener("keydown", function (e) {
+    if ($("lb").hidden) return;
+    if (e.key === "Escape") lbClose();
+    if (e.key === "ArrowLeft") lbStep(-1);
+    if (e.key === "ArrowRight") lbStep(1);
+  });
+  $("lbPick").addEventListener("click", function () {
+    var kind = lb.kind;
+    state[kind] = lb.i;
+    state.picked[kind] = true;
+    $(kind).value = String(lb.i);
+    var k = $("kind").value;
+    if (kind === "claw" && k === "brush") $("kind").value = "set";
+    if (kind === "brush" && k === "claw") $("kind").value = "set";
+    refresh();
+    lbClose();
+  });
+
+  $("copyBtn").addEventListener("click", function () {
+    var text = message();
+    var done = function () { $("toast").textContent = "Текст скопирован"; };
+    var fallback = function () {
+      var r = document.createRange();
+      r.selectNodeContents($("preview"));
+      var s = window.getSelection();
+      s.removeAllRanges(); s.addRange(r);
+      $("toast").textContent = "Текст выделен, нажмите «Копировать» в меню телефона";
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (err) { fallback(); }
+  });
+
+  refresh();
+</script>
+
+</body></html>
