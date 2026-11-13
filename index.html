@@ -228,8 +228,12 @@
   .bags { display: grid; gap: 22px; grid-template-columns: minmax(0,1fr); list-style: none; margin: 0; padding: 0; }
   @media (min-width: 640px) { .bags { grid-template-columns: repeat(3, minmax(0,1fr)); } }
   .bag { display: grid; gap: 12px; }
-  .bag .ph { display: grid; place-items: center; aspect-ratio: 4/3; background: var(--tile); }
-  .bag svg { width: 72%; height: auto; }
+  .bag .ph { aspect-ratio: 920/470; overflow: hidden; background: #f3efec; }
+  .bag .ph img { width: 100%; height: 100%; object-fit: contain; }
+  .bag-ths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bag-th { padding: 0; border: 0; background: #f3efec; cursor: pointer; aspect-ratio: 1; outline: 1px solid transparent; outline-offset: 2px; }
+  .bag-th img { width: 100%; height: 100%; object-fit: contain; }
+  .bag-th[aria-pressed="true"] { outline: 2px solid var(--accent); }
   .bag .nm { font-family: var(--font-display); font-size: 22px; line-height: 1.15; }
   .bag p { margin: 0; color: var(--muted); font-size: 14px; }
   .bag .bag-price { font-family: var(--font-display); font-size: 26px; color: var(--fg); }
@@ -318,12 +322,12 @@
       <div class="head">
         <p class="eyebrow">Новинка · 3 цвета</p>
         <h2>Косметички с инициалами</h2>
-        <p>Кожа с крокодиловым тиснением, золотая фурнитура и шильдик с вашими инициалами. Идеальный подарок, который точно не повторится.</p>
+        <p>Кожа с крокодиловым тиснением, золотая фурнитура и шильдик с вашими инициалами. Внутри мягкая отделка и 4 отделения. Подарок, который точно не повторится.</p>
       </div>
       <ul class="bag-feats"><li>Крокодиловое тиснение</li><li>Золотая фурнитура</li><li>Шильдик с инициалами</li></ul>
       <div class="bag-init">
         <label for="bagInit" class="eyebrow">Инициалы на шильдике</label>
-        <input id="bagInit" type="text" maxlength="4" placeholder="Например, A.K.">
+        <input id="bagInit" type="text" maxlength="5" placeholder="Например, A.S">
       </div>
       <ul class="bags" id="gridBags"></ul>
     </div>
@@ -662,24 +666,11 @@
   refresh();
 
   var BAGS = [
-    { name: "Коричневая", color: "#5a3424", hi: "#7a4a35" },
-    { name: "Бордовая", color: "#5e1424", hi: "#80263a" },
-    { name: "Чёрная", color: "#1a1416", hi: "#352a2e" }
+    { key: "bordo", name: "Бордо", desc: "Глубокий винный цвет и золотая фурнитура. Внутри мягкая отделка и 4 отделения." },
+    { key: "choco", name: "Шоколад", desc: "Тёплый шоколадный оттенок и золотая фурнитура. Внутри мягкая отделка и 4 отделения." },
+    { key: "black", name: "Чёрная", desc: "Строгая классика и золотая фурнитура. Внутри мягкая отделка и 4 отделения." }
   ];
-  function bagSvg(b) {
-    var scales = "";
-    for (var y = 0; y < 5; y++) for (var x = 0; x < 9; x++)
-      scales += '<rect x="' + (22 + x * 18 + (y % 2) * 9) + '" y="' + (58 + y * 15) + '" width="15" height="12" rx="4" fill="' + b.hi + '" opacity=".55"/>';
-    return '<svg viewBox="0 0 220 160" aria-hidden="true">' +
-      '<defs><clipPath id="c' + b.name.length + b.color.slice(1) + '"><rect x="14" y="40" width="192" height="108" rx="18"/></clipPath></defs>' +
-      '<rect x="14" y="40" width="192" height="108" rx="18" fill="' + b.color + '"/>' +
-      '<g clip-path="url(#c' + b.name.length + b.color.slice(1) + ')">' + scales + '</g>' +
-      '<rect x="14" y="40" width="192" height="10" rx="5" fill="#c9a24d"/>' +
-      '<rect x="190" y="36" width="8" height="22" rx="3" fill="#c9a24d"/>' +
-      '<rect x="80" y="96" width="60" height="22" rx="3" fill="#d8b562" stroke="#a8833a"/>' +
-      '<text class="bag-ini" x="110" y="112" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="13" letter-spacing="2" fill="#4a3210">A.K.</text>' +
-      '</svg>';
-  }
+  var BAG_VIEWS = [["main", "на шёлке"], ["open", "внутри"], ["front", "спереди"]];
   function bagMsg(b) {
     var ini = (document.getElementById("bagInit").value || "").trim();
     return "Здравствуйте! Хочу заказать косметичку DUÉLLE.\nЦвет: " + b.name + "\nИнициалы на шильдике: " + (ini || "уточню") + "\nЦена: 15 500 ₸";
@@ -687,16 +678,25 @@
   function renderBags() {
     var ul = document.getElementById("gridBags");
     ul.innerHTML = BAGS.map(function (b, i) {
-      return '<li class="bag"><div class="ph">' + bagSvg(b) + '</div>' +
+      var thumbs = BAG_VIEWS.map(function (v, j) {
+        return '<button type="button" class="bag-th" data-b="' + i + '" data-v="' + v[0] + '" aria-pressed="' + (j === 0) + '" aria-label="' + b.name + ': ' + v[1] + '"><img src="img/bag-' + b.key + '-' + v[0] + '.jpg" alt="" loading="lazy"></button>';
+      }).join("");
+      return '<li class="bag"><div class="ph"><img id="bagMain' + i + '" src="img/bag-' + b.key + '-main.jpg" alt="Косметичка ' + b.name + ' с крокодиловым тиснением и инициалами на шильдике" loading="lazy"></div>' +
+        '<div class="bag-ths">' + thumbs + '</div>' +
         '<div><p class="eyebrow">КС-' + (i + 1) + '</p><h3 class="nm">' + b.name + '</h3></div>' +
+        '<p>' + b.desc + '</p>' +
         '<p class="bag-price">15 500 ₸</p>' +
         '<a class="btn" data-bag="' + i + '" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a></li>';
     }).join("");
+    ul.addEventListener("click", function (e) {
+      var t = e.target.closest(".bag-th"); if (!t) return;
+      var i = +t.dataset.b, b = BAGS[i];
+      document.getElementById("bagMain" + i).src = "img/bag-" + b.key + "-" + t.dataset.v + ".jpg";
+      ul.querySelectorAll('.bag-th[data-b="' + i + '"]').forEach(function (x) { x.setAttribute("aria-pressed", x === t); });
+    });
     syncBags();
   }
   function syncBags() {
-    var ini = (document.getElementById("bagInit").value || "").trim().toUpperCase() || "A.K.";
-    document.querySelectorAll(".bag-ini").forEach(function (t) { t.textContent = ini; });
     document.querySelectorAll("[data-bag]").forEach(function (a) {
       a.href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(bagMsg(BAGS[+a.dataset.bag]));
     });
