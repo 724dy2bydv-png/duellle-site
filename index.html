@@ -223,6 +223,19 @@
     html { scroll-behavior: auto; }
     .btn, .tile .ph { transition: none; }
   }
+
+  /* Косметички */
+  .bags { display: grid; gap: 22px; grid-template-columns: minmax(0,1fr); list-style: none; margin: 0; padding: 0; }
+  @media (min-width: 640px) { .bags { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  .bag { display: grid; gap: 12px; }
+  .bag .ph { display: grid; place-items: center; aspect-ratio: 4/3; background: var(--tile); }
+  .bag svg { width: 72%; height: auto; }
+  .bag .nm { font-family: var(--font-display); font-size: 22px; line-height: 1.15; }
+  .bag p { margin: 0; color: var(--muted); font-size: 14px; }
+  .bag-price { font-family: var(--font-display); font-size: 26px; color: var(--fg); }
+  .bag-feats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 22px; padding: 0; list-style: none; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .bag-init { display: grid; gap: 6px; max-width: 320px; margin-bottom: 26px; }
+  .bag-init input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); background: transparent; color: var(--fg); text-transform: uppercase; letter-spacing: 0.2em; }
 </style>
 
 <header class="hero">
@@ -233,6 +246,7 @@
         <a href="#claws">Крабики</a>
         <a href="#brushes">Расчёски</a>
         <a href="#stones">Стразы</a>
+        <a href="#bags">Косметички</a>
         <a href="#works">Работы</a>
         <a href="#order">Заказ</a>
       </nav>
@@ -296,6 +310,22 @@
       </div>
       <p class="chosen" id="chosenStone" aria-live="polite"></p>
       <ul class="tiles stones" id="gridStones"></ul>
+    </div>
+  </section>
+
+  <section id="bags">
+    <div class="inner">
+      <div class="head">
+        <p class="eyebrow">Новинка · 3 цвета</p>
+        <h2>Косметички с инициалами</h2>
+        <p>Кожа с крокодиловым тиснением, золотая фурнитура и шильдик с вашими инициалами. Идеальный подарок, который точно не повторится.</p>
+      </div>
+      <ul class="bag-feats"><li>Крокодиловое тиснение</li><li>Золотая фурнитура</li><li>Шильдик с инициалами</li></ul>
+      <div class="bag-init">
+        <label for="bagInit" class="eyebrow">Инициалы на шильдике</label>
+        <input id="bagInit" type="text" maxlength="4" placeholder="Например, A.K.">
+      </div>
+      <ul class="bags" id="gridBags"></ul>
     </div>
   </section>
 
@@ -630,6 +660,49 @@
   });
 
   refresh();
+
+  var BAGS = [
+    { name: "Коричневая", color: "#5a3424", hi: "#7a4a35" },
+    { name: "Бордовая", color: "#5e1424", hi: "#80263a" },
+    { name: "Чёрная", color: "#1a1416", hi: "#352a2e" }
+  ];
+  function bagSvg(b) {
+    var scales = "";
+    for (var y = 0; y < 5; y++) for (var x = 0; x < 9; x++)
+      scales += '<rect x="' + (22 + x * 18 + (y % 2) * 9) + '" y="' + (58 + y * 15) + '" width="15" height="12" rx="4" fill="' + b.hi + '" opacity=".55"/>';
+    return '<svg viewBox="0 0 220 160" aria-hidden="true">' +
+      '<defs><clipPath id="c' + b.name.length + b.color.slice(1) + '"><rect x="14" y="40" width="192" height="108" rx="18"/></clipPath></defs>' +
+      '<rect x="14" y="40" width="192" height="108" rx="18" fill="' + b.color + '"/>' +
+      '<g clip-path="url(#c' + b.name.length + b.color.slice(1) + ')">' + scales + '</g>' +
+      '<rect x="14" y="40" width="192" height="10" rx="5" fill="#c9a24d"/>' +
+      '<rect x="190" y="36" width="8" height="22" rx="3" fill="#c9a24d"/>' +
+      '<rect x="80" y="96" width="60" height="22" rx="3" fill="#d8b562" stroke="#a8833a"/>' +
+      '<text class="bag-ini" x="110" y="112" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="13" letter-spacing="2" fill="#4a3210">A.K.</text>' +
+      '</svg>';
+  }
+  function bagMsg(b) {
+    var ini = (document.getElementById("bagInit").value || "").trim();
+    return "Здравствуйте! Хочу заказать косметичку DUÉLLE.\nЦвет: " + b.name + "\nИнициалы на шильдике: " + (ini || "уточню") + "\nЦена: 15 500 ₸";
+  }
+  function renderBags() {
+    var ul = document.getElementById("gridBags");
+    ul.innerHTML = BAGS.map(function (b, i) {
+      return '<li class="bag"><div class="ph">' + bagSvg(b) + '</div>' +
+        '<div><p class="eyebrow">К-' + (i + 1) + '</p><h3 class="nm">' + b.name + '</h3></div>' +
+        '<p class="bag-price">15 500 ₸</p>' +
+        '<a class="btn" data-bag="' + i + '" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a></li>';
+    }).join("");
+    syncBags();
+  }
+  function syncBags() {
+    var ini = (document.getElementById("bagInit").value || "").trim().toUpperCase() || "A.K.";
+    document.querySelectorAll(".bag-ini").forEach(function (t) { t.textContent = ini; });
+    document.querySelectorAll("[data-bag]").forEach(function (a) {
+      a.href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(bagMsg(BAGS[+a.dataset.bag]));
+    });
+  }
+  renderBags();
+  document.getElementById("bagInit").addEventListener("input", syncBags);
 </script>
 
 </body></html>
