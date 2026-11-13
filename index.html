@@ -232,7 +232,7 @@
   .bag svg { width: 72%; height: auto; }
   .bag .nm { font-family: var(--font-display); font-size: 22px; line-height: 1.15; }
   .bag p { margin: 0; color: var(--muted); font-size: 14px; }
-  .bag-price { font-family: var(--font-display); font-size: 26px; color: var(--fg); }
+  .bag .bag-price { font-family: var(--font-display); font-size: 26px; color: var(--fg); }
   .bag-feats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 22px; padding: 0; list-style: none; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   .bag-init { display: grid; gap: 6px; max-width: 320px; margin-bottom: 26px; }
   .bag-init input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); background: transparent; color: var(--fg); text-transform: uppercase; letter-spacing: 0.2em; }
@@ -688,7 +688,7 @@
     var ul = document.getElementById("gridBags");
     ul.innerHTML = BAGS.map(function (b, i) {
       return '<li class="bag"><div class="ph">' + bagSvg(b) + '</div>' +
-        '<div><p class="eyebrow">К-' + (i + 1) + '</p><h3 class="nm">' + b.name + '</h3></div>' +
+        '<div><p class="eyebrow">КС-' + (i + 1) + '</p><h3 class="nm">' + b.name + '</h3></div>' +
         '<p class="bag-price">15 500 ₸</p>' +
         '<a class="btn" data-bag="' + i + '" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a></li>';
     }).join("");
